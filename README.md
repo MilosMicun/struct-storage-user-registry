@@ -1,13 +1,50 @@
-# Sample Hardhat Project
+# UserRegistry – Struct Storage (Solidity)
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+This project demonstrates how protocols store structured state using `mapping(address => struct)`.
 
-Try running some of the following tasks:
+## Contract Overview
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.js
-```
+UserRegistry stores user data in a struct:
+
+- `id` – unique identifier
+- `name` – user name
+- `isRegistered` – invariant flag
+
+Storage model:
+
+mapping(address => User) private users;
+
+Each address maps deterministically to a storage slot via keccak256.
+
+## Invariants enforced
+
+- User can register only once
+- Unregistered users cannot modify state
+- updateName modifies only the name field
+- Storage remains isolated per address
+
+## Tests
+
+Hardhat tests verify:
+
+- Correct state transition on register()
+- Revert when unregistered user calls updateName()
+- Storage values match expected struct fields
+
+Tests use beforeEach to guarantee isolation and deterministic execution.
+
+## Tech Stack
+
+- Solidity ^0.8.20
+- Hardhat
+- Chai / Ethers.js
+
+## Repository purpose
+
+Educational implementation focused on understanding:
+
+- struct storage layout
+- mapping(address => struct)
+- storage vs memory
+- state transition invariants
+- smart contract testing
